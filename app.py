@@ -12,19 +12,50 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL",
-    "sqlite:///" + os.path.join(BASE_DIR, "instance", "headerr.db"),
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["ADMIN_EMAIL"] = os.environ.get("ADMIN_EMAIL", "")
-app.config["UPLOAD_FOLDER"] = os.path.join(app.static_folder, "images")
-app.config["RAZORPAY_KEY_ID"] = os.environ.get("RAZORPAY_KEY_ID", "")
-app.config["RAZORPAY_KEY_SECRET"] = os.environ.get("RAZORPAY_KEY_SECRET", "")
+# Vercel's deployed filesystem is read-only.
+# Only /tmp is writable.
+if os.environ.get("VERCEL"):
+    INSTANCE_DIR = "/tmp/instance"
+    UPLOAD_DIR = "/tmp/images"
+else:
+    INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
+    UPLOAD_DIR = os.path.join(BASE_DIR, "static", "images")
 
-os.makedirs(os.path.join(BASE_DIR, "instance"), exist_ok=True)
-os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+os.makedirs(INSTANCE_DIR, exist_ok=True)
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# Database
+database_url = os.environ.get("DATABASE_URL")
+
+if database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        "sqlite:///" + os.path.join(INSTANCE_DIR, "headerr.db")
+    )
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY",
+    "dev-secret-key"
+)
+
+app.config["ADMIN_EMAIL"] = os.environ.get("ADMIN_EMAIL", "")
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_DIR
+
+app.config["RAZORPAY_KEY_ID"] = os.environ.get(
+    "RAZORPAY_KEY_ID",
+    ""
+)
+
+app.config["RAZORPAY_KEY_SECRET"] = os.environ.get(
+    "RAZORPAY_KEY_SECRET",
+    ""
+)
+
+db.init_app(app)
 
 db.init_app(app)
 

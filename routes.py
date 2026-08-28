@@ -104,7 +104,7 @@ def update_cart(jersey_id):
     cart = get_cart()
     key = str(jersey_id)
     if quantity and quantity > 0:
-        cart[key] = quantity
+        cart[key] = min(quantity, 99)
     else:
         cart.pop(key, None)
     session["cart"] = cart
@@ -413,11 +413,14 @@ def verify_payment():
     order = Order.query.filter_by(
         id=pending["order_id"], customer_id=current_user.id
     ).first()
-    session.pop("pending_razorpay", None)
     if not order or not hmac.compare_digest(expected, signature):
-        flash("Payment verification failed. Please contact support.", "error")
-        return redirect(url_for("view_cart"))
+        flash(
+            "Payment verification failed. Please try again or contact support.",
+            "error",
+        )
+        return redirect(url_for("pay"))
 
+    session.pop("pending_razorpay", None)
     order.payment_status = "Paid"
     order.payment_id = payment_id
     db.session.commit()

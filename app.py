@@ -36,10 +36,21 @@ else:
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-app.config["SECRET_KEY"] = os.environ.get(
-    "SECRET_KEY",
-    "dev-secret-key"
-)
+secret_key = os.environ.get("SECRET_KEY")
+is_prod = bool(os.environ.get("VERCEL")) or bool(os.environ.get("DATABASE_URL"))
+if secret_key:
+    app.config["SECRET_KEY"] = secret_key
+elif is_prod:
+    raise RuntimeError(
+        "SECRET_KEY environment variable must be set in production."
+    )
+else:
+    app.config["SECRET_KEY"] = secrets.token_hex(32)
+
+# On Vercel (HTTPS only), force secure session cookies.
+if os.environ.get("VERCEL"):
+    app.config["SESSION_COOKIE_SECURE"] = True
+    app.config["REMEMBER_COOKIE_SECURE"] = True
 
 app.config["ADMIN_EMAIL"] = os.environ.get("ADMIN_EMAIL", "")
 

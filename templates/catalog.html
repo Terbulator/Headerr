@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ store.store_name }} | {{ store.hero_title }}</title>
+    <title>{{ store.store_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -23,7 +23,7 @@
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
             <a href="/" class="text-3xl font-teko uppercase font-black tracking-wider">{{ store.store_name }}</a>
             <div class="space-x-4 text-sm font-bold uppercase flex items-center">
-                <a href="/cart" class="hover:text-yellow-400">Cart</a>
+                <a href="/cart" class="hover:text-yellow-400">Cart ({{ cart_count() }})</a>
                 {% if current_user.is_authenticated %}
                     {% if current_user.email == config.ADMIN_EMAIL %}
                         <a href="/admin" class="text-yellow-400">Admin</a>
@@ -43,6 +43,7 @@
             <a href="/" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition {% if not active_category %}bg-black text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">All</a>
             <a href="/?category=National" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition {% if active_category == 'National' %}bg-black text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">National</a>
             <a href="/?category=Club" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition {% if active_category == 'Club' %}bg-black text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">Clubs</a>
+            <a href="/?category=General" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition {% if active_category == 'General' %}bg-black text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">General</a>
             
             <!-- Conditional Dynamic Retro Tab -->
             {% if store.show_retro == 'True' %}
@@ -56,7 +57,7 @@
                 {% if jersey.category != 'Retro' or store.show_retro == 'True' %}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition group">
                     <div class="aspect-square bg-gray-100 overflow-hidden">
-                        <img src="{{ url_for('static', filename='images/' + jersey.image_file) }}" alt="{{ jersey.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <img src="{{ url_for('static', filename='images/' + jersey.image_file) }}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/placeholder.svg') }}';" alt="{{ jersey.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     </div>
                     <div class="p-4 flex flex-col h-[140px]">
                         <p class="text-xs text-gray-400 font-bold uppercase mb-1">{{ jersey.category }}</p>
@@ -64,6 +65,7 @@
                         <div class="mt-auto flex items-center justify-between">
                             <span class="text-lg font-black text-red-600">Rs. {{ "%.2f"|format(jersey.price) }}</span>
                             <form action="{{ url_for('add_to_cart', jersey_id=jersey.id) }}" method="POST">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="bg-black text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-yellow-400 hover:text-black transition">+</button>
                             </form>
                         </div>

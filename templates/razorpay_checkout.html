@@ -12,6 +12,7 @@
         <p class="text-sm text-gray-400">Please do not close or refresh this page.</p>
         
         <form id="razorpay-form" action="/verify-payment" method="POST">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" id="razorpay_payment_id" name="razorpay_payment_id">
             <input type="hidden" id="razorpay_order_id" name="razorpay_order_id">
             <input type="hidden" id="razorpay_signature" name="razorpay_signature">
@@ -21,14 +22,13 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         var options = {
-            "key": "{{ key_id }}", 
-            "amount": "{{ amount }}", 
+            "key": "{{ key_id }}",
+            "amount": "{{ amount }}",
             "currency": "INR",
             "name": "{{ store.store_name }}",
             "description": "Purchase Order",
             "order_id": "{{ order_id }}",
             "handler": function (response){
-                // Payment was successful! Fill form values and auto-submit to Python
                 document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
                 document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
                 document.getElementById('razorpay_signature').value = response.razorpay_signature;

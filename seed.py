@@ -5,7 +5,7 @@ with app.app_context():
     Jersey.query.delete()
 
     j1 = Jersey(name="Messi Argentina 2026 Home Kit", price=299.00, category="National", image_file="argentina.png")
-    j2 = Jersey(name="Mohun Bagan SG 2025 Home Kit", price=399.00, category="Club", image_file="default.jpg")
+    j2 = Jersey(name="Mohun Bagan SG 2025 Home Kit", price=399.00, category="Club", image_file="blackout.png")
     j3 = Jersey(name="Ronaldo Man United 2008 UCL", price=349.00, category="Retro", image_file="default.jpg")
     j4 = Jersey(name="Barcelona 2009 Home Kit", price=249.00, category="Retro", image_file="default.jpg")
     j5 = Jersey(name="Brazil 2002 World Cup Kit", price=450.00, category="National", image_file="blackout.png")

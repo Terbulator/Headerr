@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Order Confirmed | Headerr Store</title>
+    <title>Order Confirmed | {{ store.store_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -15,9 +15,18 @@
             <h1 class="text-4xl font-teko font-bold uppercase mb-2 text-black">Order Confirmed!</h1>
             <p class="text-gray-500 mb-6">Thank you, {{ current_user.name }}. Your order #{{ order.id }} has been successfully placed.</p>
             
-            <div class="bg-gray-50 p-4 rounded text-left mb-8">
+            <div class="bg-gray-50 p-4 rounded text-left mb-4">
                 <p class="text-xs font-bold uppercase text-gray-400 mb-1">Delivering to:</p>
                 <p class="text-sm text-gray-800">{{ order.address }}</p>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded text-left mb-8">
+                <p class="text-xs font-bold uppercase text-gray-400 mb-1">Your Order</p>
+                {% for item in order.items %}
+                <p class="text-sm text-gray-800">{{ item.quantity }}x {{ item.jersey.name }}</p>
+                {% endfor %}
+                <p class="text-sm text-gray-800 font-bold pt-2">Total: Rs. {{ "%.2f"|format(order.amount_paid) }}</p>
+                <p class="text-sm text-gray-800">Payment: {{ order.payment_method }}{% if order.payment_status == 'Paid' %} (Paid){% endif %}</p>
             </div>
 
             <a href="/" class="block w-full bg-black text-white py-3 rounded font-bold uppercase hover:bg-zinc-800 transition">Return to Store</a>

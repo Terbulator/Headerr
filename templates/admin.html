@@ -28,6 +28,7 @@
                 <div>
                     <h2 class="text-xl font-bold uppercase mb-4 tracking-tight">Interface Configurator</h2>
                     <form method="POST" action="/admin/update_settings" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                         <div>
                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Store Brand Name</label>
                             <input type="text" name="store_name" value="{{ store.store_name }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-black">
@@ -57,6 +58,7 @@
                 <div>
                     <h2 class="text-xl font-bold uppercase mb-4 tracking-tight">Upload New Kit</h2>
                     <form method="POST" action="/admin" enctype="multipart/form-data" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                         <div>
                             <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Jersey Name</label>
                             <input type="text" name="name" required class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-black">
@@ -105,8 +107,10 @@
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 text-sm font-semibold">{{ jersey.name }} <span class="text-xs text-gray-400 ml-2 uppercase">{{ jersey.category }}</span></td>
                                     <td class="px-6 py-4 text-sm font-bold text-red-600">Rs. {{ "%.2f"|format(jersey.price) }}</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <form action="/admin/delete_jersey/{{ jersey.id }}" method="POST" onsubmit="return confirm('Delete this kit?');">
+                                    <td class="px-6 py-4 text-right space-x-2">
+                                        <a href="/admin/edit_jersey/{{ jersey.id }}" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-xs font-bold uppercase hover:bg-gray-200">Edit</a>
+                                        <form action="/admin/delete_jersey/{{ jersey.id }}" method="POST" class="inline" onsubmit="return confirm('Delete this kit?');">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                                             <button type="submit" class="bg-red-100 text-red-700 px-3 py-1 rounded text-xs font-bold uppercase hover:bg-red-200">Delete</button>
                                         </form>
                                     </td>
@@ -126,6 +130,9 @@
                                 <tr>
                                     <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Order</th>
                                     <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Customer</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Items</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Amount</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Payment</th>
                                     <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Status</th>
                                 </tr>
                             </thead>
@@ -134,8 +141,14 @@
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 font-bold">#{{ order.id }}</td>
                                     <td class="px-6 py-4 text-sm font-semibold">{{ order.customer.name }}</td>
+                                    <td class="px-6 py-4 text-xs">
+                                        {% for item in order.items %}{{ item.quantity }}x {{ item.jersey.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm font-bold">Rs. {{ "%.2f"|format(order.amount_paid) }}</td>
+                                    <td class="px-6 py-4 text-xs font-bold uppercase">{{ order.payment_method }}{% if order.payment_status == 'Paid' %} <span class="text-green-600">Paid</span>{% endif %}</td>
                                     <td class="px-6 py-4">
                                         <form action="/admin/update_order/{{ order.id }}" method="POST" class="flex items-center space-x-2">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                                             <select name="status" class="border border-gray-300 rounded px-2 py-1 text-xs font-bold uppercase bg-white">
                                                 <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
                                                 <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>

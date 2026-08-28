@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#e5e7eb"/>
+  <rect x="130" y="120" width="140" height="140" rx="8" fill="#9ca3af"/>
+  <text x="200" y="195" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="#f9fafb" text-anchor="middle">Headerr</text>
+  <text x="200" y="300" font-family="Arial, sans-serif" font-size="16" fill="#6b7280" text-anchor="middle">Kit image coming soon</text>
+</svg>

@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cart | Headerr Store</title>
+    <title>Cart | {{ store.store_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-50 font-sans">
     <header class="bg-white border-b border-gray-200 py-4 text-center">
-        <a href="/" class="text-3xl font-teko font-bold uppercase text-black">Headerr Store</a>
+        <a href="/" class="text-3xl font-teko font-bold uppercase text-black">{{ store.store_name }}</a>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 py-12">
@@ -21,14 +21,27 @@
                             <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Product</th>
                             <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Qty</th>
                             <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-right">Subtotal</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         {% for item in cart_items %}
                         <tr>
                             <td class="px-6 py-4 font-medium">{{ item.jersey.name }}</td>
-                            <td class="px-6 py-4">{{ item.quantity }}</td>
+                            <td class="px-6 py-4">
+                                <form action="{{ url_for('update_cart', jersey_id=item.jersey.id) }}" method="POST" class="flex items-center space-x-2">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="w-16 border border-gray-300 rounded px-2 py-1 text-sm text-center">
+                                    <button type="submit" class="text-[10px] font-bold uppercase bg-gray-100 px-3 py-1 rounded hover:bg-gray-200">Update</button>
+                                </form>
+                            </td>
                             <td class="px-6 py-4 text-right font-bold">Rs. {{ "%.2f"|format(item.subtotal) }}</td>
+                            <td class="px-6 py-4 text-right">
+                                <form action="{{ url_for('remove_from_cart', jersey_id=item.jersey.id) }}" method="POST">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="text-[10px] font-bold uppercase text-red-600 hover:text-red-700">Remove</button>
+                                </form>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

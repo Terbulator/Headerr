@@ -1,6 +1,8 @@
 import os
+import secrets
+
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, abort, request, session
 from flask_login import LoginManager
 from models import db, get_settings
 
@@ -37,7 +39,33 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+def get_csrf_token():
+    if "_csrf_token" not in session:
+        session["_csrf_token"] = secrets.token_hex(32)
+    return session["_csrf_token"]
+
+
+def cart_count():
+    cart = session.get("cart", {})
+    if isinstance(cart, list):
+        return len(cart)
+    return sum(v for v in cart.values() if isinstance(v, int))
+
+
+@app.before_request
+def csrf_protect():
+    if request.method == "POST":
+        token = request.form.get("_csrf_token", "")
+        if not token or not secrets.compare_digest(
+            token, session.get("_csrf_token", "")
+        ):
+            abort(400)
+
+
 @app.context_processor
 def inject_store():
-    with app.app_context():
-        return {"store": get_settings()}
+    return {
+        "store": get_settings(),
+        "csrf_token": get_csrf_token,
+        "cart_count": cart_count,
+    }

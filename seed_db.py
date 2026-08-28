@@ -12,7 +12,7 @@ with app.app_context():
         description="Authentic Maroon and Green",
         price=90.00,
         category="Club",
-        image_file="default.jpg"
+        image_file="blackout.png"
     )
 
     kit_2 = Jersey(

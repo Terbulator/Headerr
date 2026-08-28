@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Checkout | Headerr Store</title>
+    <title>Checkout | {{ store.store_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -15,12 +15,21 @@
         <div>
             <h2 class="text-xl font-bold uppercase mb-4">Shipping Details</h2>
             <form method="POST" action="/checkout" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Full Delivery Address</label>
                     <textarea name="address" required rows="3" class="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:border-black" placeholder="123 Football Lane, City, Zip..."></textarea>
                 </div>
-                <div class="bg-blue-50 text-blue-800 p-4 rounded text-sm font-medium">
-                    Payment Method: Cash on Delivery / Pay on Confirmation
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Payment Method</label>
+                    <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-black transition">
+                        <span class="text-sm font-semibold">Cash on Delivery</span>
+                        <input type="radio" name="payment_method" value="COD" checked class="w-4 h-4 accent-black">
+                    </label>
+                    <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-black transition">
+                        <span class="text-sm font-semibold">Pay Online (Card / UPI / Netbanking)</span>
+                        <input type="radio" name="payment_method" value="razorpay" class="w-4 h-4 accent-black">
+                    </label>
                 </div>
                 <button type="submit" class="w-full bg-black text-white py-4 rounded font-bold uppercase hover:bg-zinc-800 transition">Place Order</button>
             </form>

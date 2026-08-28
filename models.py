@@ -54,8 +54,23 @@ class Order(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     status = db.Column(db.String(50), nullable=False, default="Pending")
+    payment_method = db.Column(db.String(20), nullable=False, default="COD")
+    payment_status = db.Column(db.String(20), nullable=False, default="COD")
     payment_id = db.Column(db.String(100))
     amount_paid = db.Column(db.Float, nullable=False, default=0.0)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     customer = db.relationship("User", backref="orders")
+    items = db.relationship(
+        "OrderItem", backref="order", cascade="all, delete-orphan"
+    )
+
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey("order.id"), nullable=False)
+    jersey_id = db.Column(db.Integer, db.ForeignKey("jersey.id"), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    unit_price = db.Column(db.Float, nullable=False, default=0.0)
+
+    jersey = db.relationship("Jersey")

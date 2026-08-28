@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing Payment... | {{ store.store_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen text-white font-sans">
+    <div class="text-center space-y-4">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto"></div>
+        <h2 class="text-xl font-bold uppercase tracking-wider">Securely Opening Gateway...</h2>
+        <p class="text-sm text-gray-400">Please do not close or refresh this page.</p>
+        
+        <form id="razorpay-form" action="/verify-payment" method="POST">
+            <input type="hidden" id="razorpay_payment_id" name="razorpay_payment_id">
+            <input type="hidden" id="razorpay_order_id" name="razorpay_order_id">
+            <input type="hidden" id="razorpay_signature" name="razorpay_signature">
+        </form>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            "key": "{{ key_id }}", 
+            "amount": "{{ amount }}", 
+            "currency": "INR",
+            "name": "{{ store.store_name }}",
+            "description": "Purchase Order",
+            "order_id": "{{ order_id }}",
+            "handler": function (response){
+                // Payment was successful! Fill form values and auto-submit to Python
+                document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                document.getElementById('razorpay-form').submit();
+            },
+            "prefill": {
+                "name": "{{ user.name }}",
+                "email": "{{ user.email }}"
+            },
+            "theme": {
+                "color": "#000000"
+            },
+            "modal": {
+                "ondismiss": function(){
+                    window.location.href = "/cart";
+                }
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        window.onload = function() {
+            rzp1.open();
+        }
+    </script>
+</body>
+</html>

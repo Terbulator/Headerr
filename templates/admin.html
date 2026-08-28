@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Command Center | {{ store.store_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans min-h-screen pb-12">
+    
+    <header class="bg-black text-white py-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <div class="text-2xl font-teko font-bold uppercase tracking-wider text-yellow-400">Command Center</div>
+            <div class="space-x-4 text-sm font-bold uppercase">
+                <a href="/" class="hover:text-yellow-400 transition">View Store</a>
+                <a href="/logout" class="text-red-500 hover:text-red-400">Log out</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Settings & Upload -->
+            <div class="lg:col-span-1 space-y-8">
+                
+                <!-- Interface Configurator -->
+                <div>
+                    <h2 class="text-xl font-bold uppercase mb-4 tracking-tight">Interface Configurator</h2>
+                    <form method="POST" action="/admin/update_settings" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Store Brand Name</label>
+                            <input type="text" name="store_name" value="{{ store.store_name }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-black">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Announcement Bar</label>
+                            <input type="text" name="announcement_text" value="{{ store.announcement_text }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-black">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Theme Accent Color</label>
+                            <select name="theme_color" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-black bg-white">
+                                <option value="black" {% if store.theme_color == 'black' %}selected{% endif %}>Dark Charcoal</option>
+                                <option value="indigo" {% if store.theme_color == 'indigo' %}selected{% endif %}>Classic Indigo</option>
+                                <option value="emerald" {% if store.theme_color == 'emerald' %}selected{% endif %}>Pitch Emerald</option>
+                                <option value="crimson" {% if store.theme_color == 'crimson' %}selected{% endif %}>Crimson Red</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+                            <label class="text-xs font-bold uppercase text-gray-700">Display Retro Catalog</label>
+                            <input type="checkbox" name="show_retro" value="True" {% if store.show_retro == 'True' %}checked{% endif %} class="w-4 h-4 text-black border-gray-300 rounded focus:ring-black">
+                        </div>
+                        <button type="submit" class="w-full bg-black text-white py-3 rounded-xl font-bold uppercase text-sm hover:bg-zinc-800 transition">Apply Interface Changes</button>
+                    </form>
+                </div>
+
+                <!-- Product Upload -->
+                <div>
+                    <h2 class="text-xl font-bold uppercase mb-4 tracking-tight">Upload New Kit</h2>
+                    <form method="POST" action="/admin" enctype="multipart/form-data" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Jersey Name</label>
+                            <input type="text" name="name" required class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-black">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Price (Rs.)</label>
+                                <input type="number" step="0.01" name="price" required class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Category</label>
+                                <select name="category" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm bg-white">
+                                    <option value="National">National</option>
+                                    <option value="Club">Club</option>
+                                    <option value="Retro">Retro</option>
+                                    <option value="General">General</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Image</label>
+                            <input type="file" name="image" accept="image/*" required class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-black file:text-white">
+                        </div>
+                        <button type="submit" class="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold uppercase text-sm hover:bg-yellow-500 transition">Publish to Store</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Products & Orders -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Manage Catalog -->
+                <div>
+                    <h2 class="text-xl font-bold uppercase mb-4 tracking-tight">Manage Catalog</h2>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-[350px] overflow-y-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 border-b sticky top-0">
+                                <tr>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Product</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Price</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                {% for jersey in jerseys %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-sm font-semibold">{{ jersey.name }} <span class="text-xs text-gray-400 ml-2 uppercase">{{ jersey.category }}</span></td>
+                                    <td class="px-6 py-4 text-sm font-bold text-red-600">Rs. {{ "%.2f"|format(jersey.price) }}</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <form action="/admin/delete_jersey/{{ jersey.id }}" method="POST" onsubmit="return confirm('Delete this kit?');">
+                                            <button type="submit" class="bg-red-100 text-red-700 px-3 py-1 rounded text-xs font-bold uppercase hover:bg-red-200">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Fulfillment -->
+                <div>
+                    <h2 class="text-xl font-bold uppercase mb-4 tracking-tight">Live Orders & Fulfillment</h2>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 border-b">
+                                <tr>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Order</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Customer</th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                {% for order in orders %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-bold">#{{ order.id }}</td>
+                                    <td class="px-6 py-4 text-sm font-semibold">{{ order.customer.name }}</td>
+                                    <td class="px-6 py-4">
+                                        <form action="/admin/update_order/{{ order.id }}" method="POST" class="flex items-center space-x-2">
+                                            <select name="status" class="border border-gray-300 rounded px-2 py-1 text-xs font-bold uppercase bg-white">
+                                                <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                                <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                                                <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                            </select>
+                                            <button type="submit" class="bg-black text-white px-3 py-1 rounded text-[10px] font-bold uppercase hover:bg-zinc-800">Save</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</body>
+</html>

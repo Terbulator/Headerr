@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register | Headerr Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans min-h-screen flex flex-col justify-center">
+    <div class="max-w-md w-full mx-auto p-6 bg-white border border-gray-200 rounded shadow my-auto">
+        <h2 class="text-2xl font-bold uppercase text-center mb-6">Register</h2>
+        <form method="POST" action="/register" class="space-y-4">
+            <input type="text" name="name" required placeholder="Full Name" class="w-full border p-3 rounded">
+            <input type="email" name="email" required placeholder="Email" class="w-full border p-3 rounded">
+            <input type="password" name="password" required placeholder="Password" class="w-full border p-3 rounded">
+            <button type="submit" class="w-full bg-black text-white py-3 rounded font-bold uppercase">Create Account</button>
+        </form>
+        <p class="mt-4 text-center text-sm">Have an account? <a href="/login" class="font-bold underline">Log In</a></p>
+    </div>
+</body>
+</html>

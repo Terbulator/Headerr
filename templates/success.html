@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmed | Headerr Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans flex flex-col min-h-screen">
+    <main class="flex-grow flex items-center justify-center py-12 px-4">
+        <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg border border-gray-200 text-center">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h1 class="text-4xl font-teko font-bold uppercase mb-2 text-black">Order Confirmed!</h1>
+            <p class="text-gray-500 mb-6">Thank you, {{ current_user.name }}. Your order #{{ order.id }} has been successfully placed.</p>
+            
+            <div class="bg-gray-50 p-4 rounded text-left mb-8">
+                <p class="text-xs font-bold uppercase text-gray-400 mb-1">Delivering to:</p>
+                <p class="text-sm text-gray-800">{{ order.address }}</p>
+            </div>
+
+            <a href="/" class="block w-full bg-black text-white py-3 rounded font-bold uppercase hover:bg-zinc-800 transition">Return to Store</a>
+        </div>
+    </main>
+</body>
+</html>
